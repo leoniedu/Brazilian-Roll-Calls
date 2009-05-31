@@ -1,4 +1,7 @@
 library(foreign)
+source("utils.R")
+try(source("mergeApprox.R"))
+
 ## figure out how to automatically download this file
 f <- "dep_lista.asp.html"
 time.download <- Sys.time() ## will have to change this if downloading manually
@@ -14,9 +17,9 @@ data.legis <- data.frame(idcamara=ids,name=names,inoffice=!out,time=time.downloa
 ##can collect more data from the individual webpages
 head(data.legis)
 
-download.file("http://www.camara.gov.br/internet/votacaodbf/53Terceira/votcam09.dbf","here.dbf",mode="wb")
+download.file("http://www.camara.gov.br/internet/votacaodbf/53Terceira/votcam09.dbf","../tmp/here.dbf",mode="wb")
 
-txt <- read.dbf("here.dbf")
+txt <- read.dbf("../tmp/here.dbf")
 decode <- function(x) data.frame(lapply(x,
                                         function(z) {
                                           if (is.character(z)|is.factor(z)){
@@ -31,8 +34,8 @@ txtd$NUMVOT <- pad0(as.numeric(as.character(txt$NUMVOT)),4)
 
 getx <- function(x) {
   fname <- paste("CD09",x,".dbf",sep="")
-  download.file(paste("http://www.camara.gov.br/internet/votacaodbf/53Terceira/",fname,sep=""),"file.dbf",mode="wb")
-  dnow <- read.dbf("file.dbf")
+  download.file(paste("http://www.camara.gov.br/internet/votacaodbf/53Terceira/",fname,sep=""),"../tmp/file.dbf",mode="wb")
+  dnow <- read.dbf("../tmp/file.dbf")
   dnow$file <- fname
   dnow$file.name <- x
   dnow
