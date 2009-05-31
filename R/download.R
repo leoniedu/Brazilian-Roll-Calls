@@ -3,7 +3,7 @@ source("utils.R")
 try(source("mergeApprox.R"))
 
 ## figure out how to automatically download this file
-f <- "dep_lista.asp.html"
+f <- "../data/dep_lista.asp.html"
 time.download <- Sys.time() ## will have to change this if downloading manually
 
 ll <- readLines(f,encoding="latin1")
