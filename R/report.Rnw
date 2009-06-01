@@ -57,10 +57,15 @@ picaretas$url <- paste('<a href="http://www.camara.gov.br/internet/deputado/Dep_
 
 <p> 
 
-<<echo=FALSE,fig=TRUE>>=
+
+<img src="../images/ausprop.png"/>
+
+<<echo=FALSE>>=
 
 p <- qplot(concpt_prop,ausente_prop,data=partido.voto,size=concpt_total,label=partido,col=I(rgb(0,.25,.5,.5)))+geom_text(vjust=2,data=partido.voto,size=I(3.5))+scale_y_continuous(limits=c(0,1),expand=c(0,0),name="Proporção de votos ausentes")+scale_x_continuous(limits=c(0,1),expand=c(0,0),name="Suporte ao PT")+opts(legend.position="none")
+png(file="../images/ausprop.png")
 print(p)
+dev.off()
 
 @
 </p>
