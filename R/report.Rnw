@@ -1,0 +1,103 @@
+<!--
+Use the following R command to sweave this file:
+Sweave("report.Rnw",driver=RweaveHTML())
+!-->
+
+
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<body>
+
+<<echo=FALSE>>=
+
+library(reshape)
+library(ggplot2)
+
+n <- 30
+load("../data/53Terceira.RData")
+picaretas.all <- recast(data.votos,idcamara+nome+partido+uf~voto,measure.var="numvot")
+
+
+datarank <- rank(-as.numeric(as.character(data.votacoes$datavot)),ties.method="first")
+data.votacoes <- data.votacoes[datarank<=n,]
+data.votacoes$data <- as.character(as.Date(data.votacoes$datavot,format="%y%m%d"))
+data.votacoes <- data.votacoes[order(data.votacoes$data,decreasing=TRUE),]
+rownames(data.votacoes) <- NULL
+data.votos <- merge(data.votacoes,data.votos,by="numvot")
+
+
+data.votos$ausente <- data.votos$voto=="ausente"
+partido.voto <- recast(data.votos,partido~variable,measure.var="ausente",fun.aggregate=function(x) c(prop=sum(x)/length(x),total=length(x)))
+conc.pt <- recast(subset(data.votos,partido=="PT"),numvot~variable,measure.var="voto",fun.aggregate=rattle::modalvalue)
+conc.pt <- reshape::rename(conc.pt, c(voto="votopt"))
+data.votos <-merge(data.votos, conc.pt)
+data.votos$concpt <- with(data.votos, votopt==voto)
+
+partido.voto <- recast(data.votos,partido~variable,measure.var=c("ausente","concpt") ,fun.aggregate=function(x) c(prop=sum(x)/length(x),total=length(x)))
+
+
+
+picaretas <- recast(data.votos,idcamara+nome+partido+uf~voto,measure.var="numvot")
+picaretas <- picaretas[order(picaretas$ausente,picaretas$partido,decreasing=TRUE),]
+picaretas$url <- paste('<a href="http://www.camara.gov.br/internet/deputado/Dep_Detalhe.asp?id=',picaretas$idcamara,'"> link </a>',sep='')
+
+
+@
+
+
+<h1>Análise das últimas <Sexpr n> votações da Câmara dos Deputados </h1>
+<p align=center>
+	<font size=+1>
+         Eduardo L. Leoni<br>
+	<Sexpr format(Sys.time(), "%d/%m/%Y")>
+	</font>
+	<br>
+</p>
+
+
+<p> 
+
+<<echo=FALSE,fig=TRUE>>=
+
+p <- qplot(concpt_prop,ausente_prop,data=partido.voto,size=concpt_total,label=partido,col=I(rgb(0,.25,.5,.5)))+geom_text(vjust=2,data=partido.voto,size=I(3.5))+scale_y_continuous(limits=c(0,1),expand=c(0,0),name="Proporção de votos ausentes")+scale_x_continuous(limits=c(0,1),expand=c(0,0),name="Suporte ao PT")+opts(legend.position="none")
+print(p)
+
+@
+</p>
+
+
+<p>&nbsp;&nbsp;&nbsp;Os 10 deputados que mais faltaram nas últimas <Sexpr n> votações:</p>
+
+
+<<echo=FALSE>>=
+picaretas[1:10,]
+@
+
+
+
+<p>&nbsp;&nbsp;&nbsp;Lista com as últimas votações:</p>
+
+
+<<echo=FALSE>>=
+
+data.votacoes$mapa <- with(data.votacoes, paste('<img src="../images/',datavot,'.',numvot,'small.png','" height=45 width=45 />',sep=''))
+data.votacoes$mapa <- with(data.votacoes, paste('<a href="../images/',datavot,'.',numvot,'.png','">',mapa,'</a>',sep=''))
+data.votacoes$datavot <- NULL
+data.votacoes$numvot <- NULL
+data.votacoes
+
+@
+
+
+
+<!-- <p>which showns that the location parameter of the Ozone distribution varies significantly from month to month. Finally, we include a boxplot of the data: -->
+
+
+<!-- <<echo=FALSE,fig=TRUE>>= -->
+<!-- boxplot(Ozone ~ Month, data=airquality) -->
+<!-- @ -->
+
+</body>
+
+</html>
+
