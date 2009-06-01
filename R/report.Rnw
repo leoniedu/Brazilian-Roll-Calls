@@ -15,6 +15,7 @@ library(reshape)
 library(ggplot2)
 library(GDD)
 library(RColorBrewer)
+source("utils.R")
 
 n <- 30
 load("../data/53Terceira.RData")
