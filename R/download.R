@@ -129,7 +129,7 @@ save(data.votos,data.votacoes,data.legis,file=paste('../data/',session.now,'.RDa
 
 ##lparties <- names(sort(-table(data.votos$partido)))
 
-m1 <- readShape.cent("../data/maps/Brasil.shp","UF")
+m1 <- readShape.cent("../data/maps/BRASIL.shp","UF")
 ## plot maps
 nvotnow <- "0045"
 for (nvotnow in data.votacoes$numvot) {
