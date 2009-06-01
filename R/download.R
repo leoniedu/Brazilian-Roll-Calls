@@ -1,7 +1,11 @@
 library(foreign)
 library(RColorBrewer)
 library(GDD)
+library(reshape)
 source("utils.R")
+
+
+download.now <- FALSE
 
 try(source("mergeApprox.R"))
 try(source("spatial.R"))
@@ -67,7 +71,7 @@ readx <- function(x) {
 }
 
 ##download
-download.results <- lapply(dbf$numvot,getx)
+if (download.now) download.results <- lapply(dbf$numvot,getx)
 
 d.all <- lapply(dbf$numvot,readx)
 
@@ -107,13 +111,16 @@ tmp3$u <- with(tmp3,ave(voto=="<------->",file,FUN=sum))
 ##exclude votes with all missing
 tmp3 <- subset(tmp3,u!=n)
 
+
+## create final format
+
 data.votos <- subset(tmp3,select=-c(n,u,threshold,file,nome_par,inoffice,time))
 data.votos$voto <- tolower(car::recode(data.votos$voto,"'<------->'='AUSENTE'"))
+data.votos$voto <- factor(data.votos$voto,levels=c("sim","nao", "obstrucao","abstencao", "art. 17", "ausente"))
 data.votos$numvot <- factor(data.votos$file.name)
 data.votos$file.name <- NULL
 data.votos <- reshape::rename(data.votos,c(`name`="nome"))
 
-library(reshape)
 
 data.votacoes <- merge(subset(dbfd,select=c(numvot,datavot,texordia)),recast(data.votos,numvot~voto,measure.var="idcamara",fun.aggregate=length,margins="grand_col"))
 data.votacoes <- reshape::rename(data.votacoes,c(`(all)`="total"))
@@ -122,13 +129,12 @@ data.votacoes <- reshape::rename(data.votacoes,c(`(all)`="total"))
 conc.pt <- recast(subset(data.votos,partido=="PT"),numvot~variable,measure.var="voto",fun.aggregate=rattle::modalvalue)
 conc.pt <- reshape::rename(conc.pt, c(voto="votopt"))
 data.votos <-merge(data.votos, conc.pt)
-data.votos$concpt <- with(data.votos, votopt==voto)
+data.votos$concpt <- with(data.votos, as.character(votopt)==as.character(voto))
 
 save(data.votos,data.votacoes,data.legis,file=paste('../data/',session.now,'.RData',sep=''))
 
 
 
-##lparties <- names(sort(-table(data.votos$partido)))
 
 m1 <- readShape.cent("../data/maps/BRASIL.shp","UF")
 ## plot maps
@@ -156,3 +162,26 @@ for (nvotnow in data.votacoes$numvot) {
   mtext(tolower(paste(dn$texordia,"\n",dn$data)),3, cex=1)
   dev.off()  
 }
+
+
+
+
+library(ggplot2)
+
+tmp <- subset(data.votos,numvot=="0099")
+tmp$simnao <- car::recode(tmp$voto,"'sim'='sim';else='nao'")
+lp <- names(sort(-table(data.votos$partido)))[1:10]
+tmp <- subset(tmp,partido%in%lp)
+tmp$partido <- reorder(tmp$partido,tmp$partido,FUN=function(x) length(x))
+##FIX calculate votopt again
+qplot(partido, data=tmp,geom="bar",fill=voto)+ scale_fill_manual(values = c(brewer.pal(9,"Reds")[5],rev(brewer.pal(6,"Blues")[-1])))
+
+
+
+
+
+
+
+
+## tmp <- recast(subset(data.votos,numvot=="0099"),measure.var=c("concpt"),partido~variable,fun.aggregate=function(x) c(prop=sum(x)/length(x),total=length(x)))
+## partido.voto <- recast(data.votos,partido~variable,measure.var="ausente",fun.aggregate=function(x) c(prop=sum(x)/length(x),total=length(x)))

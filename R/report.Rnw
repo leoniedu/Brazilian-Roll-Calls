@@ -1,5 +1,6 @@
 <!--
 Use the following R command to sweave this file:
+library(R2HTML)
 Sweave("report.Rnw",driver=RweaveHTML())
 !-->
 
@@ -19,6 +20,8 @@ load("../data/53Terceira.RData")
 picaretas.all <- recast(data.votos,idcamara+nome+partido+uf~voto,measure.var="numvot")
 
 
+
+
 datarank <- rank(-as.numeric(as.character(data.votacoes$datavot)),ties.method="first")
 data.votacoes <- data.votacoes[datarank<=n,]
 data.votacoes$data <- as.character(as.Date(data.votacoes$datavot,format="%y%m%d"))
@@ -29,10 +32,6 @@ data.votos <- merge(data.votacoes,data.votos,by="numvot")
 
 data.votos$ausente <- data.votos$voto=="ausente"
 partido.voto <- recast(data.votos,partido~variable,measure.var="ausente",fun.aggregate=function(x) c(prop=sum(x)/length(x),total=length(x)))
-conc.pt <- recast(subset(data.votos,partido=="PT"),numvot~variable,measure.var="voto",fun.aggregate=rattle::modalvalue)
-conc.pt <- reshape::rename(conc.pt, c(voto="votopt"))
-data.votos <-merge(data.votos, conc.pt)
-data.votos$concpt <- with(data.votos, votopt==voto)
 
 partido.voto <- recast(data.votos,partido~variable,measure.var=c("ausente","concpt") ,fun.aggregate=function(x) c(prop=sum(x)/length(x),total=length(x)))
 
@@ -41,6 +40,15 @@ partido.voto <- recast(data.votos,partido~variable,measure.var=c("ausente","conc
 picaretas <- recast(data.votos,idcamara+nome+partido+uf~voto,measure.var="numvot")
 picaretas <- picaretas[order(picaretas$ausente,picaretas$partido,decreasing=TRUE),]
 picaretas$url <- paste('<a href="http://www.camara.gov.br/internet/deputado/Dep_Detalhe.asp?id=',picaretas$idcamara,'"> link </a>',sep='')
+
+tmp <- data.votos
+tmp$simnao <- car::recode(tmp$voto,"'sim'='sim';else='nao'")
+lp <- names(sort(-table(data.votos$partido)))[1:10]
+tmp <- subset(tmp,partido%in%lp)
+tmp$partido <- with(tmp,reorder(partido,concpt,FUN=mean))
+tmp$concpt <- factor(tmp$concpt,levels=c("TRUE","FALSE"),labels=c("A Favor","Contra") )
+##FIX calculate votopt again
+p2 <- qplot(partido, data=tmp,geom="bar",fill=concpt)+ scale_fill_manual(values = c(brewer.pal(9,"Reds")[6],rev(brewer.pal(6,"Blues")[-1])))
 
 
 @
@@ -61,27 +69,38 @@ picaretas$url <- paste('<a href="http://www.camara.gov.br/internet/deputado/Dep_
 
 <img src="../images/ausprop.png"/>
 
-<<echo=FALSE>>=
+<img src="../images/suporte.png"/>
 
-p <- qplot(concpt_prop,ausente_prop,data=partido.voto,size=concpt_total,label=partido,col=I(rgb(0,.25,.5,.5)))+geom_text(vjust=2,data=partido.voto,size=I(3.5))+scale_y_continuous(limits=c(0,1),expand=c(0,0),name="Proporção de votos ausentes")+scale_x_continuous(limits=c(0,1),expand=c(0,0),name="Suporte ao PT")+opts(legend.position="none")
+<<echo=FALSE,results=hide>>=
+
+p1 <- qplot(concpt_prop,ausente_prop,data=partido.voto,size=concpt_total,label=partido,col=I(rgb(0,.25,.5,.5)))+geom_text(vjust=2,data=partido.voto,size=I(3.5))+scale_y_continuous(limits=c(0,1),expand=c(0,0),name="Proporção de votos ausentes")+scale_x_continuous(limits=c(0,1),expand=c(0,0),name="Suporte ao PT")+opts(legend.position="none")
 GDD(file="../images/ausprop.png",width=480,height=480)
-print(p)
+print(p1)
 dev.off()
+
+
+GDD(file="../images/suporte.png",width=580,height=480)
+print(p2)
+dev.off()
+
 
 @
 </p>
 
 
-<p>&nbsp;&nbsp;&nbsp;Os 10 deputados que mais faltaram nas últimas <Sexpr n> votações:</p>
+
+<h2>Os 10 deputados que mais faltaram nas últimas <Sexpr n> votações:</h2>
 
 
 <<echo=FALSE>>=
+picaretas$idcamara <- NULL
+rownames(picaretas) <- NULL
 picaretas[1:10,]
 @
 
 
 
-<p>&nbsp;&nbsp;&nbsp;Lista com as últimas votações:</p>
+<h2>Lista com as últimas votações:</h2>
 
 
 <<echo=FALSE>>=
