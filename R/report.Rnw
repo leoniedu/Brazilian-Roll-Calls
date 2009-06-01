@@ -14,6 +14,7 @@ Sweave("report.Rnw",driver=RweaveHTML())
 library(reshape)
 library(ggplot2)
 library(GDD)
+library(RColorBrewer)
 
 n <- 30
 load("../data/53Terceira.RData")
@@ -109,6 +110,15 @@ data.votacoes$mapa <- with(data.votacoes, paste('<img src="../images/',datavot,'
 data.votacoes$mapa <- with(data.votacoes, paste('<a href="../images/',datavot,'.',numvot,'.png','">',mapa,'</a>',sep=''))
 data.votacoes$datavot <- NULL
 data.votacoes$numvot <- NULL
+data.votacoes$texordia <- with(data.votacoes,
+                           paste('<a href="http://www.camara.gov.br/sileg/Prop_Lista.asp?Sigla=',
+                                 trim(substr(texordia,1,3)),
+                                 '&Numero=',
+                                 sapply(strsplit(substr(texordia,7,13)," |/"),
+                                        function(x) as.numeric(trim(x[[2]]))),
+                                 '&Ano=',sapply(strsplit(substr(texordia,7,20)," |/"),
+                                                function(x) as.numeric(trim(x[[3]]))),'">',texordia,'</a>',sep=''))
+
 data.votacoes
 
 @
