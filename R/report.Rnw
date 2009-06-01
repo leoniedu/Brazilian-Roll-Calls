@@ -12,6 +12,7 @@ Sweave("report.Rnw",driver=RweaveHTML())
 
 library(reshape)
 library(ggplot2)
+library(GDD)
 
 n <- 30
 load("../data/53Terceira.RData")
@@ -63,7 +64,7 @@ picaretas$url <- paste('<a href="http://www.camara.gov.br/internet/deputado/Dep_
 <<echo=FALSE>>=
 
 p <- qplot(concpt_prop,ausente_prop,data=partido.voto,size=concpt_total,label=partido,col=I(rgb(0,.25,.5,.5)))+geom_text(vjust=2,data=partido.voto,size=I(3.5))+scale_y_continuous(limits=c(0,1),expand=c(0,0),name="Proporção de votos ausentes")+scale_x_continuous(limits=c(0,1),expand=c(0,0),name="Suporte ao PT")+opts(legend.position="none")
-GDD(file="../images/ausprop.png",width=300,height=300)
+GDD(file="../images/ausprop.png",width=480,height=480)
 print(p)
 dev.off()
 
