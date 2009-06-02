@@ -5,6 +5,9 @@ library(GDD)
 library(reshape)
 source("utils.R")
 
+##file with the current legislators
+##http://www.camara.gov.br/internet/deputado/deputado.xls
+## may be a send an email link?
 
 
 try(source("mergeApprox.R"))
@@ -203,13 +206,16 @@ for (nvotnow in data.votacoes$numvot) {
   pdf(file=paste(fname,"barsmall.pdf",sep=""),height=6,width=4)
   print(psmall)
   dev.off()  
-  system(paste("convert ", paste(fname,"small.pdf",sep="")," ",fname,"small.png",sep=""),wait=FALSE)
-  system(paste("convert ", paste(fname,".pdf",sep="")," ",fname,".png",sep=""),wait=FALSE)
-  system(paste("convert ", paste(fname,"barsmall.pdf",sep="")," ",fname,"barsmall.png",sep=""),wait=FALSE)
-  system(paste("convert ", paste(fname,"bar.pdf",sep="")," ",fname,"bar.png",sep=""),wait=FALSE)
+  system(paste("convert -density 600x600 -resize 800x800 ", paste(fname,"small.pdf",sep="")," ",fname,"small.png",sep=""),wait=FALSE)
+  system(paste("convert -density 600x600 -resize 300x200 ", paste(fname,"barsmall.pdf",sep="")," ",fname,"barsmall.png",sep=""),wait=FALSE)
+  system(paste("convert -density 600x600 -resize 800x800 -quality 90", paste(fname,"bar.pdf",sep="")," ",fname,"bar.png",sep=""),wait=FALSE)
+  system(paste("convert -density 600x600 -resize 800x800", paste(fname,".pdf",sep="")," ",fname,".png",sep=""),wait=FALSE)
 }
 
 
+## system(paste("convert  -density 600x600 -resize 800x560 -quality 90 ", paste(fname,"bar.pdf",sep="")," ",fname,"barNEW.png",sep=""),wait=FALSE)
+
+## convert    90 $file `echo $file|cut -f1 -d'.'`.png
 
 
 ## tmp <- subset(data.votos,numvot=="0099")
