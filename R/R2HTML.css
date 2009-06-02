@@ -41,5 +41,8 @@ TD.ListBackMain{background: #E0E0E0; padding:0 0}
 TD.firstcolumn{padding:5 10;background:#C0C0C0;text-align=right}
 TD.cellinside{padding:5 10;background:#FFFFFF;text-align=right}
 
-
-
+A:link {text-decoration: none}
+A:visited {text-decoration: none}
+img {border: 1px solid transparent;} 
+A:hover {text-decoration: underline; color: red; border: red;}
+a:hover img { border: 1px solid red; } 
