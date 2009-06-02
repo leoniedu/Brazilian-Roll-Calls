@@ -7,10 +7,17 @@ Sweave("report.Rnw",driver=RweaveHTML())
 
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<script src="sorttable.js"></script>
+
 <body>
+
+
+
 
 <<echo=FALSE>>=
 
+options(R2HTML.sortableDF=FALSE)
 library(reshape)
 library(ggplot2)
 library(GDD)
@@ -84,21 +91,22 @@ p1 <- qplot(concpt_prop,ausente_prop,data=partido.voto,size=concpt_total,label=p
 
 
 
-<h2>Os 10 deputados que mais faltaram nas últimas <Sexpr n> votações:</h2>
+<h2>Os 10 deputados que mais faltaram:</h2>
 
 
-<<echo=FALSE>>=
+<<echo=FALSE,results=html>>=
 picaretas$idcamara <- NULL
 rownames(picaretas) <- NULL
-picaretas[1:10,]
+names(picaretas) <- names(picaretas)
+HTML(picaretas[1:10,],classtable="sortable")
 @
 
 
 
-<h2>Lista com as últimas votações:</h2>
+<h2>Informações sobre as votações:</h2>
 
 
-<<echo=FALSE>>=
+<<echo=FALSE,results=html>>=
 
 data.votacoes$resultado <- with(data.votacoes, paste('<img src="../images/',datavot,'.',numvot,'barsmall.png','" height=45 width=45 />',sep=''))
 data.votacoes$resultado <- with(data.votacoes, paste('<a href="../images/',datavot,'.',numvot,'bar.png','">',resultado,'</a>',sep=''))
@@ -111,7 +119,9 @@ tipo,
                                  '&Numero=',
                                  numero,
                                  '&Ano=',ano,'">',descricao,'</a>',sep=''))
-subset(data.votacoes,select=c(data,proposicao,descricao,resultado,mapa))
+data.votacoes <- subset(data.votacoes,select=c(data,proposicao,descricao,resultado,mapa))
+names(data.votacoes) <- toupper (names(data.votacoes))
+HTML(data.votacoes,classtable="sortable")
 
 @
 
