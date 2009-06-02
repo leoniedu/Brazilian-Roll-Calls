@@ -181,7 +181,7 @@ for (nvotnow in data.votacoes$numvot) {
   dev.off()
   tmp <- subset(data.votos,numvot==nvotnow)
   ##tmp$fc <- with(tmp,car::recode(voto,"'sim'='A favor';else='Contra'"))
-  colvec <- c("transparent","red")[order(table(tmp$votopt))]
+  colvec <- c("transparent","blue")[order(table(tmp$votopt))]
   ## Stacked barchart
   wd <- 1
   theme_set(theme_grey(base_size = 10))
