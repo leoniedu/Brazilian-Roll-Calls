@@ -1,3 +1,4 @@
+try(setwd("/home/leoniedu/reps/Brazilian-Roll-Calls/R"))
 i <- 3
 j <- 3
 sessions <- 51:53
