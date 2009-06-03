@@ -162,7 +162,7 @@ for (nvotnow in data.votacoes$numvot) {
   n1 <- 4
   seqx <- c(0,.15,.3,.45,.55,.70,.85,1)
   ##seqx <- seq(0,1,length=length(col.vec)+1)
-  col.vec <- c(rev(brewer.pal(n1,"Blues")[-1]),"grey80",brewer.pal(n1,"Reds")[-1])
+  col.vec <- c(rev(brewer.pal(n1,"Blues")[-1]),"grey95",brewer.pal(n1,"Reds")[-1])
   dn <- subset(data.votacoes,numvot==nvotnow)
   fname <- with(dn,paste("../images/",datavot,".",numvot,"",sep=""))
   ##png(file=with(dn,paste("../images/",datavot,".",numvot,"small.png",sep="")))  
