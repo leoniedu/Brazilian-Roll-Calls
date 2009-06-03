@@ -4,11 +4,11 @@ try(source("~/projects/cluelessR/trunk/mergeApprox.R"))
 
 
 ##check if file is update
-file.updated <- function(x,y) {
-  ix <- file.info(x)
-  iy <- file.info(y)
-  !((ix$size==iy$size)&(ix$mtime==iy$mtime))
-}
+## file.updated <- function(x,y) {
+##   ix <- file.info(x)
+##   iy <- file.info(y)
+##   !((ix$size==iy$size)&(ix$mtime==iy$mtime))
+## }
 
 
 wordwrap<-function(x,len,collapse="\n",...) paste(strwrap(x,width=len,...),collapse=collapse)
