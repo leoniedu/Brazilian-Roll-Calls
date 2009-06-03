@@ -30,7 +30,8 @@ XMP{font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt }
 
 
 TR{font-family: Arial, Helvetica,Times, Helvetica, sans-serif; font-size: 10pt; font-style: normal  ; padding:0 0}
-TR.firstline{color: #FFFFFF; background: #000000;text-align=center;font-weight: bold}
+
+TR.firstline{color: #FFFFFF; background: #000000;text-align=center;font-weight: bold;}
 
 TR.ListBackTitle{color: #FFFFFF; background: #000000;text-align=left;font-weight: bold}
 
@@ -46,3 +47,12 @@ A:visited {text-decoration: none}
 img {border: 1px solid transparent;} 
 A:hover {text-decoration: underline; color: red; border: red;}
 a:hover img { border: 1px solid red; } 
+
+
+/* Sortable tables */
+table.sortable thead {
+    background-color:#eee;
+    color:#666666;
+    font-weight: bold;
+    cursor: default;
+}
