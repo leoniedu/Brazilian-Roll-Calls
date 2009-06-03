@@ -1,4 +1,5 @@
 try(setwd("/home/leoniedu/reps/Brazilian-Roll-Calls/R"))
+Sys.setlocale(category = "LC_ALL", locale = "en_US.UTF-8")
 i <- 3
 j <- 3
 sessions <- 51:53
