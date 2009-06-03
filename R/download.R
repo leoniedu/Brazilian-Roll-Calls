@@ -153,7 +153,7 @@ load(file=paste('../data/',session.now,'.RData',sep=''))
 m1 <- readShape.cent("../data/maps/BRASIL.shp","UF")
 ## plot maps
 nvotnow <- "0045"
-for (nvotnow in data.votacoes$numvot) {
+for (nvotnow in rev(data.votacoes$numvot)) {
   cat(".")
   tmp <- recast(subset(data.votos,numvot==nvotnow),uf~variable,measure.var="concpt",fun.aggregate=function(x) c(n=length(x),p=sum(x)/length(x)))
   tmp$UF <- tmp$uf

@@ -14,11 +14,11 @@ dbf.old <- file.info(paste("../data/",fname,sep=""))
 system(paste("wget ",fname," -Nr -P ../data",sep=""))
 ##file updated?
 dbf.new <- file.info(paste("../data/",fname,sep=""))
-file.updated <- all.equal(dbf.old[,c("size","mtime")],dbf.new[,c("size","mtime")])
+file.updated <- !all.equal(dbf.old[,c("size","mtime")],dbf.new[,c("size","mtime")])
 
 if (file.updated) {
   download.now <- TRUE
   source("download.R")
   library(R2HTML)
-  Sweave("report.Rnw")
+  Sweave("report.Rnw",driver=RweaveHTML())
 }
