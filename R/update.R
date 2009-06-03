@@ -16,7 +16,7 @@ system(paste("wget ",fname," -Nr -P ../data",sep=""))
 dbf.new <- file.info(paste("../data/",fname,sep=""))
 file.updated <- all.equal(dbf.old[,c("size","mtime")],dbf.new[,c("size","mtime")])
 
-if (!file.updated) {
+if (file.updated) {
   download.now <- TRUE
   source("download.R")
   library(R2HTML)
