@@ -34,7 +34,7 @@ datarank <- rank(-as.numeric(as.character(data.votacoes$datavot)),ties.method="f
 data.votacoes <- data.votacoes[datarank<=n,]
 data.votacoes <- data.votacoes[order(data.votacoes$data,decreasing=TRUE),]
 rownames(data.votacoes) <- NULL
-data.votos <- merge(data.votacoes,data.votos,by="numvot")
+data.votos <- merge(data.votacoes,data.votos,by="file.name",suffix=c('.ag',''))
 
 
 partido.voto <- recast(data.votos,partido~variable,measure.var=c("ausente","concpt") ,fun.aggregate=function(x) c(prop=sum(x)/length(x),total=length(x)))
