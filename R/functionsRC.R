@@ -1,3 +1,5 @@
+library(foreign)
+
 ## global vars
 sessions <- 51:53
 rounds <- c("Primeira","Segunda","Terceira","Quarta")
@@ -30,8 +32,8 @@ readx <- function(x) {
 }
 
 
-barplot.rc <- function(nvotnow,fname,title) {
-  tmp <- subset(data.votos,numvot==nvotnow)
+barplot.rc <- function(filenow,fname,title) {
+  tmp <- subset(data.votos,file.name==filenow)
   colvec <- c("transparent","blue")[order(table(tmp$votopt))]
   ## Stacked barchart
   wd <- 1
@@ -59,32 +61,33 @@ barplot.rc <- function(nvotnow,fname,title) {
   dev.off()  
 }
 
-map.rc <- function(nvotnow,fname,title) {
-  tmp <- recast(subset(data.votos,numvot==nvotnow),uf~variable,measure.var="concpt",fun.aggregate=function(x) c(n=length(x),p=sum(x)/length(x)))
+map.rc <- function(filenow,fname,title) {
+  tmp <- recast(subset(data.votos,file.name==filenow),uf~variable,measure.var="concpt",fun.aggregate=function(x) c(n=length(x),p=sum(x)/length(x)))
   tmp$UF <- tmp$uf
   m2 <- merge.sp(m1,tmp,by="UF")
   par(bg="grey")
   n1 <- 4
   seqx <- c(0,.15,.3,.45,.55,.70,.85,1)
   col.vec <- c(rev(brewer.pal(n1,"Blues")[-1]),"grey95",brewer.pal(n1,"Reds")[-1])
+  pdf(file=paste(fname,"small.pdf",sep=""),height=6,width=6)
   par(mai=c(0,0,0,0))
   plot.heat(m2,NULL,"concpt_p",title="Proporção votando\njunto com o PT",breaks=seqx,reverse=FALSE,cex.legend=1,bw=1,col.vec=col.vec,plot.legend=FALSE)
   dev.off()
   pdf(file=paste(fname,".pdf",sep=""),height=6,width=6)
   par(mai=c(0,0,0.6,0))
-  plot.heat(m2,NULL,"concpt_p",title="Proporção votando\njunto com o PT",breaks=seqx,reverse=FALSE,cex.legend=1,bw=1,col.vec=col.vec,main=nvotnow)
+  plot.heat(m2,NULL,"concpt_p",title="Proporção votando\njunto com o PT",breaks=seqx,reverse=FALSE,cex.legend=1,bw=1,col.vec=col.vec,main=filenow)
   with(m2@data,text(x,y,UF,cex=0.8),col="grey30")
   mtext(title,3, cex=.9)
   dev.off()
 }
 
-graphs <- function(nvotnow) {  
-  dn <- subset(data.votacoes,numvot==nvotnow)
-  fname <- with(dn,paste("../images/",datavot,".",numvot,"",sep=""))
-  title <- wordwrap(subset(data.votacoes,numvot==nvotnow)$texordia,40)
+graphs <- function(filenow) {  
+  dn <- subset(data.votacoes,file.name==filenow)
+  fname <- with(dn,paste("../images/",datavot,".",substr(filenow,nchar(filenow)-11,nchar(filenow)-4),"",sep=""))  
+  title <- wordwrap(subset(data.votacoes,file.name==filenow)$texordia,40)
   cat(".")
-  barplot.rc(nvotnow,fname,title)
-  map.rc(nvotnow,fname,title)
+  barplot.rc(filenow,fname,title)
+  map.rc(filenow,fname,title)
   system(paste("convert -density 400x400 -resize 45x45 -quality 90 ", paste(fname,"small.pdf",sep="")," ",fname,"small.png",sep=""),wait=TRUE)
   system(paste("convert -density 400x400 -resize 45x45 -quality 90 ", paste(fname,"barsmall.pdf",sep="")," ",fname,"barsmall.png",sep=""),wait=TRUE)
   system(paste("convert -density 400x400 -resize 800x800 -quality 90 ", paste(fname,"bar.pdf",sep="")," ",fname,"bar.png",sep=""),wait=TRUE)

@@ -22,7 +22,7 @@ head(data.legis)
 
 names(dbf) <- tolower(names(dbf))
 dbfd <- decode(dbf)
-dbfd$numvot <- pad0(as.numeric(as.character(dbf$numvot)),4)
+dbfd$file.name <- paste("www.camara.gov.br/internet/votacaodbf/",session.now,"/","CD",year.now,pad0(as.numeric(as.character(dbf$numvot)),4),".dbf",sep="")
 
 
 ##download
@@ -72,17 +72,19 @@ tmp3 <- subset(tmp3,u!=n)
 if (nrow(tmp3)==0) stop("No new votes")
 
 ## create final format
-data.votos <- subset(tmp3,select=-c(n,u,threshold,file,nome_par,inoffice,time))
+data.votos <- subset(tmp3,select=-c(n,u,threshold,nome_par,inoffice,time))
 data.votos$voto <- tolower(car::recode(data.votos$voto,"'<------->'='AUSENTE'"))
 data.votos$voto <- factor(data.votos$voto,levels=c("sim","nao", "obstrucao","abstencao", "art. 17", "ausente"))
-data.votos$numvot <- factor(data.votos$file.name)
-data.votos$file.name <- NULL
+data.votos$file.name <- factor(data.votos$file)
+data.votos$file <- NULL
 data.votos <- reshape::rename(data.votos,c(`name`="nome"))
-data.votacoes <- merge(subset(dbfd,select=c(numvot,datavot,texordia)),recast(data.votos,numvot~voto,measure.var="idcamara",fun.aggregate=length,margins="grand_col"))
+
+tmp4 <- recast(data.votos,file.name~voto,measure.var="idcamara",fun.aggregate=length,margins="grand_col")
+data.votacoes <- merge(subset(dbfd,select=c(numvot,file.name,datavot,texordia)),tmp4,by="file.name")
 data.votacoes <- reshape::rename(data.votacoes,c(`(all)`="total"))
 data.votos$voto2 <- car::recode(data.votos$voto,"'sim'='A Favor';else='Contra'")
 
-conc.pt <- recast(subset(data.votos,partido=="PT"),numvot~variable,measure.var="voto2",fun.aggregate=rattle::modalvalue)
+conc.pt <- recast(subset(data.votos,partido=="PT"),file.name~variable,measure.var="voto2",fun.aggregate=rattle::modalvalue)
 conc.pt <- reshape::rename(conc.pt, c(voto2="votopt"))
 data.votos <-merge(data.votos, conc.pt)
 data.votos$concpt <- with(data.votos, as.character(votopt)==as.character(voto2))
@@ -93,22 +95,76 @@ data.votacoes$ano <- as.numeric(sapply(ss,function(x) x[4]))
 data.votacoes$proposicao <- with(data.votacoes,paste(tipo," ",numero,"/",ano,sep=""))
 data.votacoes$descricao <- sapply(ss,function(x) paste(x[6:length(x)], collapse=" "))
 
+
+data.votacoes$data <- as.character(as.Date(data.votacoes$datavot,format="%y%m%d"))
+data.votacoes$wpdate <- as.character(paste(data.votacoes$data,"T12:00:00"))
+data.votacoes$wpid <- NA
+data.votacoes <- data.votacoes[order(data.votacoes$data,decreasing=TRUE),]
+rownames(data.votacoes) <- NULL
+data.votos$ausente <- data.votos$voto=="ausente"
+
+data.votacoes$wptitle <- paste(data.votacoes[,"proposicao"],data.votacoes[,"descricao"],data.votacoes[,"data"])
+data.votacoes$wpimage <- with(data.votacoes,paste('images/',datavot,'.',numvot,'.png',sep=''))
+
+
+
+data.votacoes$resultado <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',datavot,'.',numvot,'barsmall.png','" height=45 width=45 />',sep=''))
+data.votacoes$resultado <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',datavot,'.',numvot,'bar.png','">',resultado,'</a>',sep=''))
+data.votacoes$mapa <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',datavot,'.',numvot,'small.png','" height=45 width=45 />',sep=''))
+data.votacoes$mapa <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',datavot,'.',numvot,'.png','">',mapa,'</a>',sep=''))
+data.votacoes$wpdescricao <- sapply(data.votacoes$descricao,function(x) wordwrap(x,40,collapse="<br>",prefix=""))
+data.votacoes$wpdescricao <- with(data.votacoes,
+paste('<a href="http://www.camara.gov.br/sileg/Prop_Lista.asp?Sigla=',
+tipo,
+                                 '&Numero=',
+                                 numero,
+                                 '&Ano=',ano,'">',wpdescricao,'</a>',sep=''))
+
+data.votacoes$wpcontent <- paste("Link para a proposicao na Camara: ",data.votacoes[,"descricao"],data.votacoes[,"mapa"],data.votacoes[,"resultado"])
+
+
+##take this out data.votacoes <- subset(data.votacoes,select=c(data,proposicao,descricao,resultado,mapa))
+
+## should add this through a database
+##FIX!
 data.votos.new <- data.votos
 data.votacoes.new <- data.votacoes
-## should add this through a database
+
+
+
+##load(file=paste('../data/',session.now,'.RData',sep=''))
+m1 <- readShape.cent("../data/maps/BRASIL.shp","UF")
+updateall <- FALSE
+for (i in 1:nrow(data.votacoes)) {
+  print(i)
+  filenow <- as.character(data.votacoes$file.name[i])
+  ## create graphs
+  graphs(filenow)
+  ## create blog post
+  data.votacoes$wpid[i] <- with(data.votacoes[i,], {
+    res <- wpid[i]
+    if(is.na(res)|updateall) {
+      cat(wptitle,file="title.txt")
+      cat(wpimage,file="imagelink.txt")
+      cat(wpcontent,file="post.txt")
+      ##put this earlier in the code
+      cat(gsub(" |-","",as.character(wpdate)),file='date.txt')
+      cat(as.character(tipo),file='category.txt')
+      ##res <- system("python post.py",intern=TRUE)
+    } else {
+      ##modify the python script so that it just edits the post when there is already an id number
+    }
+    res
+  })
+  ##   file.show("title.txt")
+  ##   file.show("imagelink.txt")
+  ##   file.show("post.txt")
+}
+
 if (file.exists(paste('../data/',session.now,'.RData',sep=''))) {
   load(file=paste('../data/',session.now,'.RData',sep=''))
-  data.votos <- rbind(data.votos,data.votos.new)
-  data.votacoes <- rbind(data.votacoes,data.votacoes.new)
+  data.votos <- merge(data.votos,data.votos.new,all=TRUE)
+  data.votacoes <- merge(data.votacoes,data.votacoes.new,all=TRUE)
 }
 save(data.votos,data.votacoes,file=paste('../data/',session.now,'.RData',sep=''))
-
-
-load(file=paste('../data/',session.now,'.RData',sep=''))
-m1 <- readShape.cent("../data/maps/BRASIL.shp","UF")
-for (nvotnow in rev(data.votacoes$numvot)) {
-  ## create graphs
-  graphs(nvotnow)
-  ## create blog post
-}
 

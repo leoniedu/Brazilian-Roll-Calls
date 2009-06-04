@@ -1,6 +1,8 @@
 try(setwd("/home/leoniedu/reps/Brazilian-Roll-Calls/R"))
 source("functionsRC.R")
 
+update.all <- TRUE
+
 Sys.setlocale(category = "LC_ALL", locale = "en_US.UTF-8")
 i <- 3
 j <- 3
@@ -19,14 +21,15 @@ dbf.old <- read.dbf(paste("../data/",fname,sep=""))[-c(3:9),]
 system(paste("wget ",fname," -Nr -P ../data",sep=""))
 ## new pdf
 dbf.new <- read.dbf(paste("../data/",fname,sep=""))
-dbf.new <- dbf.new[!with(dbf.new,(NUMVOT%in%dbf.old$NUMVOT)&(NUMVOT%in%dbf.old$NUMVOT)),]
-##file updated?
-file.updated <- nrow(dbf.new)>0
+if (!update.all)   dbf.new <- dbf.new[!with(dbf.new,(NUMVOT%in%dbf.old$NUMVOT)&(NUMVOT%in%dbf.old$NUMVOT)),]
 
+download.now <- FALSE
+##file updated?
+file.updated <- (nrow(dbf.new)>0)|update.all
 if (file.updated) {
   dbf <- dbf.new
   download.now <- TRUE
-  ##source("matchRollLegis.R")
+  source("matchRollLegis.R")
   source("download.R")
   library(R2HTML)
   Sweave("report.Rnw",driver=RweaveHTML())
