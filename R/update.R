@@ -1,5 +1,8 @@
+totest <- TRUE
 try(setwd("/home/leoniedu/reps/Brazilian-Roll-Calls/R"))
 source("functionsRC.R")
+
+
 
 update.all <- TRUE
 
@@ -23,16 +26,22 @@ if (file.exists(dbfname)) {
 ## wget new file
 system(paste("wget ",fname," -Nr -P ../data",sep=""))
 ## new pdf
-dbf.new <- read.dbf(paste("../data/",fname,sep=""))
+dbf <- read.dbf(paste("../data/",fname,sep=""))
 if (file.exists(dbfname)) {
-  if ((!update.all))   dbf.new <- dbf.new[!with(dbf.new,(NUMVOT%in%dbf.old$NUMVOT)&(NUMVOT%in%dbf.old$NUMVOT)),]
+  if ((!update.all))   dbf <- dbf[!with(dbf,(NUMVOT%in%dbf.old$NUMVOT)&(NUMVOT%in%dbf.old$NUMVOT)),]
 }
-download.now <- FALSE
+download.now <- TRUE
 ##file updated?
-file.updated <- (nrow(dbf.new)>0)|update.all
+file.updated <- (nrow(dbf)>0)|update.all
+
+
+if (totest) {
+  download.now <- FALSE
+  dbf <- dbf[1:min(5,nrow(dbf)),]
+  file.update <- TRUE
+}
+
 if (file.updated) {
-  dbf <- dbf.new
-  download.now <- TRUE
   source("matchRollLegis.R")
   source("download.R")
   library(R2HTML)
