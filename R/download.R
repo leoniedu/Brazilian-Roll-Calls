@@ -105,7 +105,7 @@ data.votos$ausente <- data.votos$voto=="ausente"
 
 
 
-fname <- with(data.votacoes,paste("../images/",datavot,".",substr(file.name,nchar(filenow)-11,nchar(filenow)-4),"",sep=""))  
+fname <- with(data.votacoes,paste("../images/",datavot,".",substr(file.name,nchar(file.name)-11,nchar(file.name)-4),"",sep=""))  
 
 data.votacoes$wptitle <- paste(data.votacoes[,"proposicao"],data.votacoes[,"descricao"],data.votacoes[,"data"])
 data.votacoes$wpimage <- with(data.votacoes,paste('images/',datavot,'.',fname,'.png',sep=''))
