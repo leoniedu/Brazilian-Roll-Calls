@@ -140,7 +140,7 @@ for (i in 1:nrow(data.votacoes)) {
   print(i)
   filenow <- as.character(data.votacoes$file.name[i])
   ## create graphs
-  graphs(filenow)
+  ##graphs(filenow)
   ## create blog post
   data.votacoes$wpid[i] <- with(data.votacoes[i,], {
     res <- wpid[i]
