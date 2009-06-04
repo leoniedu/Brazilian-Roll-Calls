@@ -15,6 +15,8 @@ Sweave("report.Rnw",driver=RweaveHTML())
 
 
 
+
+
 <<echo=FALSE>>=
 
 options(R2HTML.sortableDF=FALSE)
@@ -43,7 +45,8 @@ partido.voto <- recast(data.votos,partido~variable,measure.var=c("ausente","conc
 
 
 
-picaretas <- recast(data.votos,idcamara+nome+partido+uf~voto,measure.var="numvot")
+picaretas <- recast(data.votos,idcamara+nome+partido+uf~voto,measure.var="numvot",fun.aggregate=length)
+
 picaretas <- picaretas[order(picaretas$ausente,picaretas$partido,decreasing=TRUE),]
 picaretas$url <- paste('<a href="http://www.camara.gov.br/internet/deputado/Dep_Detalhe.asp?id=',picaretas$idcamara,'"> link </a>',sep='')
 
@@ -108,10 +111,15 @@ HTML(picaretas[1:10,],classtable="sortable")
 
 <<echo=FALSE,results=html>>=
 
-data.votacoes$resultado <- with(data.votacoes, paste('<img src="../images/',datavot,'.',numvot,'barsmall.png','" height=45 width=45 />',sep=''))
-data.votacoes$resultado <- with(data.votacoes, paste('<a href="../images/',datavot,'.',numvot,'bar.png','">',resultado,'</a>',sep=''))
-data.votacoes$mapa <- with(data.votacoes, paste('<img src="../images/',datavot,'.',numvot,'small.png','" height=45 width=45 />',sep=''))
-data.votacoes$mapa <- with(data.votacoes, paste('<a href="../images/',datavot,'.',numvot,'.png','">',mapa,'</a>',sep=''))
+tp <- 10
+(title <- paste(data.votacoes[tp,"proposicao"],data.votacoes[tp,"descricao"],data.votacoes[tp,"data"]))
+cat(title,file="title.txt")
+cat(with(data.votacoes[tp,],paste('images/',datavot,'.',numvot,'.png',sep='')),file="imagelink.txt")
+
+data.votacoes$resultado <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',datavot,'.',numvot,'barsmall.png','" height=45 width=45 />',sep=''))
+data.votacoes$resultado <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',datavot,'.',numvot,'bar.png','">',resultado,'</a>',sep=''))
+data.votacoes$mapa <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',datavot,'.',numvot,'small.png','" height=45 width=45 />',sep=''))
+data.votacoes$mapa <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',datavot,'.',numvot,'.png','">',mapa,'</a>',sep=''))
 data.votacoes$descricao <- sapply(data.votacoes$descricao,function(x) wordwrap(x,40,collapse="<br>",prefix=""))
 data.votacoes$descricao <- with(data.votacoes,
 paste('<a href="http://www.camara.gov.br/sileg/Prop_Lista.asp?Sigla=',
@@ -120,6 +128,10 @@ tipo,
                                  numero,
                                  '&Ano=',ano,'">',descricao,'</a>',sep=''))
 data.votacoes <- subset(data.votacoes,select=c(data,proposicao,descricao,resultado,mapa))
+post <- paste("Link para a proposicao na Camara: ",data.votacoes[tp,"descricao"],data.votacoes[tp,"mapa"],data.votacoes[tp,"resultado"])
+cat(post,file="post.txt")
+post.id <- system("python post.py",intern=TRUE)
+
 names(data.votacoes) <- toupper (names(data.votacoes))
 HTML(data.votacoes,classtable="sortable")
 
