@@ -103,15 +103,16 @@ data.votacoes <- data.votacoes[order(data.votacoes$data,decreasing=TRUE),]
 rownames(data.votacoes) <- NULL
 data.votos$ausente <- data.votos$voto=="ausente"
 
+
+
+fname <- with(dn,paste("../images/",datavot,".",substr(filenow,nchar(filenow)-11,nchar(filenow)-4),"",sep=""))  
+
 data.votacoes$wptitle <- paste(data.votacoes[,"proposicao"],data.votacoes[,"descricao"],data.votacoes[,"data"])
-data.votacoes$wpimage <- with(data.votacoes,paste('images/',datavot,'.',numvot,'.png',sep=''))
-
-
-
-data.votacoes$resultado <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',datavot,'.',numvot,'barsmall.png','" height=45 width=45 />',sep=''))
-data.votacoes$resultado <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',datavot,'.',numvot,'bar.png','">',resultado,'</a>',sep=''))
-data.votacoes$mapa <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',datavot,'.',numvot,'small.png','" height=45 width=45 />',sep=''))
-data.votacoes$mapa <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',datavot,'.',numvot,'.png','">',mapa,'</a>',sep=''))
+data.votacoes$wpimage <- with(data.votacoes,paste('images/',datavot,'.',fname,'.png',sep=''))
+data.votacoes$resultado <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',datavot,'.',fname,'barsmall.png','" height=45 width=45 />',sep=''))
+data.votacoes$resultado <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',datavot,'.',fname,'bar.png','">',resultado,'</a>',sep=''))
+data.votacoes$mapa <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',datavot,'.',fname,'small.png','" height=45 width=45 />',sep=''))
+data.votacoes$mapa <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',datavot,'.',fname,'.png','">',mapa,'</a>',sep=''))
 data.votacoes$wpdescricao <- sapply(data.votacoes$descricao,function(x) wordwrap(x,40,collapse="<br>",prefix=""))
 data.votacoes$wpdescricao <- with(data.votacoes,
 paste('<a href="http://www.camara.gov.br/sileg/Prop_Lista.asp?Sigla=',
