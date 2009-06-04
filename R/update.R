@@ -16,13 +16,17 @@ fname <- paste(rdir,"votcam",year.now,".dbf",sep="")
 
 
 ## current dbf
-dbf.old <- read.dbf(paste("../data/",fname,sep=""))[-c(3:9),]
+dbfname <- paste("../data/",fname,sep="")
+if (file.exists(dbfname)) {
+  dbf.old <- read.dbf(dbfname)
+}
 ## wget new file
 system(paste("wget ",fname," -Nr -P ../data",sep=""))
 ## new pdf
 dbf.new <- read.dbf(paste("../data/",fname,sep=""))
-if (!update.all)   dbf.new <- dbf.new[!with(dbf.new,(NUMVOT%in%dbf.old$NUMVOT)&(NUMVOT%in%dbf.old$NUMVOT)),]
-
+if (file.exists(dbfname)) {
+  if ((!update.all))   dbf.new <- dbf.new[!with(dbf.new,(NUMVOT%in%dbf.old$NUMVOT)&(NUMVOT%in%dbf.old$NUMVOT)),]
+}
 download.now <- FALSE
 ##file updated?
 file.updated <- (nrow(dbf.new)>0)|update.all
