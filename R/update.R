@@ -37,7 +37,7 @@ file.updated <- (nrow(dbf)>0)|update.all
 
 if (totest) {
   download.now <- FALSE
-  dbf <- dbf[1:min(5,nrow(dbf)),]
+  dbf <- dbf[1:min(15,nrow(dbf)),]
   file.update <- TRUE
 }
 
