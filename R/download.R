@@ -105,14 +105,14 @@ data.votos$ausente <- data.votos$voto=="ausente"
 
 
 
-fname <- with(data.votacoes,paste("../images/",datavot,".",substr(file.name,nchar(file.name)-11,nchar(file.name)-4),"",sep=""))  
+fname <- with(data.votacoes,paste(datavot,".",substr(file.name,nchar(file.name)-11,nchar(file.name)-4),"",sep=""))  
 
 data.votacoes$wptitle <- paste(data.votacoes[,"proposicao"],data.votacoes[,"descricao"],data.votacoes[,"data"])
-data.votacoes$wpimage <- with(data.votacoes,paste('images/',datavot,'.',fname,'.png',sep=''))
-data.votacoes$resultado <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',datavot,'.',fname,'barsmall.png','" height=45 width=45 />',sep=''))
-data.votacoes$resultado <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',datavot,'.',fname,'bar.png','">',resultado,'</a>',sep=''))
-data.votacoes$mapa <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',datavot,'.',fname,'small.png','" height=45 width=45 />',sep=''))
-data.votacoes$mapa <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',datavot,'.',fname,'.png','">',mapa,'</a>',sep=''))
+data.votacoes$wpimage <- with(data.votacoes,paste('images/',fname,'.png',sep=''))
+data.votacoes$resultado <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',fname,'barsmall.png','" height=45 width=45 />',sep=''))
+data.votacoes$resultado <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',fname,'bar.png','">',resultado,'</a>',sep=''))
+data.votacoes$mapa <- with(data.votacoes, paste('<img src="http://cluelessresearch.com/images/',fname,'small.png','" height=45 width=45 />',sep=''))
+data.votacoes$mapa <- with(data.votacoes, paste('<a href="http://cluelessresearch.com/images/',fname,'.png','">',mapa,'</a>',sep=''))
 data.votacoes$wpdescricao <- sapply(data.votacoes$descricao,function(x) wordwrap(x,40,collapse="<br>",prefix=""))
 data.votacoes$wpdescricao <- with(data.votacoes,
 paste('<a href="http://www.camara.gov.br/sileg/Prop_Lista.asp?Sigla=',
@@ -162,10 +162,11 @@ for (i in 1:nrow(data.votacoes)) {
   ##   file.show("post.txt")
 }
 
-if (file.exists(paste('../data/',session.now,'.RData',sep=''))) {
-  load(file=paste('../data/',session.now,'.RData',sep=''))
-  data.votos <- merge(data.votos,data.votos.new,all=TRUE)
-  data.votacoes <- merge(data.votacoes,data.votacoes.new,all=TRUE)
-}
+## if (file.exists(paste('../data/',session.now,'.RData',sep=''))) {
+##   load(file=paste('../data/',session.now,'.RData',sep=''))
+##   data.votos <- merge(data.votos,data.votos.new,all=TRUE)
+##   data.votacoes <- merge(data.votacoes,data.votacoes.new,all=TRUE)
+## }
+
 save(data.votos,data.votacoes,file=paste('../data/',session.now,'.RData',sep=''))
 

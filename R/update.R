@@ -1,10 +1,11 @@
-totest <- TRUE
+totest <- FALSE
+update.all <- TRUE
+
 try(setwd("/home/leoniedu/reps/Brazilian-Roll-Calls/R"))
 source("functionsRC.R")
 
 
 
-update.all <- TRUE
 
 Sys.setlocale(category = "LC_ALL", locale = "en_US.UTF-8")
 i <- 3
