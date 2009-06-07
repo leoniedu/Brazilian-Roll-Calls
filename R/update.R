@@ -1,4 +1,4 @@
-totest <- FALSE
+totest <- TRUE
 update.all <- TRUE
 
 try(setwd("/home/leoniedu/reps/Brazilian-Roll-Calls/R"))
