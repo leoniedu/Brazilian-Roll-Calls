@@ -53,6 +53,7 @@ dnow[with(dnow,tolower(name)=="clovis volpi" & is.na(uf)),"uf"] <- "sp"
 dnow[with(dnow,tolower(name)=="gessivaldo isaias" & is.na(uf)),"uf"] <- "pi"
 dnow[with(dnow,tolower(name)=="marcelo teixeira" & is.na(uf)),"uf"] <- "ce"
 dnow[with(dnow,tolower(name)=="nelson otoch" & is.na(uf)),"uf"] <- "ce"
+dnow[with(dnow,tolower(name)=="silvio torres" & is.na(uf)),"uf"] <- "sp"
        
 d.rolls <- with(dnow,unique(data.frame(nameroll=toupper(name),uf=toupper(uf))))
 d.rolls$id <- 1:nrow(d.rolls)
