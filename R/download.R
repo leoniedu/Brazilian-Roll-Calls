@@ -223,3 +223,5 @@ if (dbExistsTable(connect,"votacoes")) {
                 row.names = F, eol = "\r\n" ))
 }
 
+rm(data.votacoes,data.votos,tmp1,tmp3,dnow,dbf,dbfd)
+gc()
