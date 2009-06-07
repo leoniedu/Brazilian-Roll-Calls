@@ -1,5 +1,4 @@
-totest <- TRUE
-update.all <- TRUE
+totest <- FALSE
 
 try(setwd("/home/leoniedu/reps/Brazilian-Roll-Calls/R"))
 source("functionsRC.R")
@@ -18,8 +17,8 @@ try(dbRemoveTable(connect,"votos"))
 try(dbRemoveTable(connect,"votacoes"))
 
 
-try(dbRemoveTable(connect,"legisladores"))
-source("createLegis.R",echo=TRUE)
+## try(dbRemoveTable(connect,"legisladores"))
+## source("createLegis.R",echo=TRUE)
 
 
 Sys.setlocale(category = "LC_ALL", locale = "en_US.UTF-8")
@@ -41,16 +40,12 @@ for (i in 1:3) {
     if (file.exists(dbfname)) {
       dbf <- read.dbf(dbfname)
       download.now <- TRUE
-      ##file updated?
-      file.updated <- update.all
       if (totest) {
         download.now <- TRUE
         dbf <- dbf[1:min(15,nrow(dbf)),]
         file.update <- TRUE
       }
-      if (file.updated) {
-        source("download.R",echo=FALSE)
-      }
+      source("download.R",echo=FALSE)
     }
   }
 }

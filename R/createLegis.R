@@ -11,6 +11,7 @@ for (i in 1:length(sessions)) {
   ll <- readLines(f,encoding="latin1")
   pe <- ll[grep("Partido/UF",ll)]
   if (length(pe)==0) {
+    ll <- readLines(f,encoding="latin1")
     ## here if it is a list of previous sessions
     punloc <- grep(".*-.*/[A-Z]{2}",ll,perl=TRUE)    
     pun <- ll[punloc]
