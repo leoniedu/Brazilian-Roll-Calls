@@ -47,6 +47,13 @@ dnow$name <- normalize(dnow$nome_par)
 dnow$uf <- dnow$estado
 levels(dnow$uf) <- state.l2a(levels(dnow$uf))
 
+##manual fixes
+dnow[with(dnow,tolower(name)=="carlos cur" & is.na(uf)),"uf"] <- "ro"
+dnow[with(dnow,tolower(name)=="clovis volpi" & is.na(uf)),"uf"] <- "sp"
+dnow[with(dnow,tolower(name)=="gessivaldo isaias" & is.na(uf)),"uf"] <- "pi"
+dnow[with(dnow,tolower(name)=="marcelo teixeira" & is.na(uf)),"uf"] <- "ce"
+dnow[with(dnow,tolower(name)=="nelson otoch" & is.na(uf)),"uf"] <- "ce"
+       
 d.rolls <- with(dnow,unique(data.frame(nameroll=toupper(name),uf=toupper(uf))))
 d.rolls$id <- 1:nrow(d.rolls)
 d.rolls$legislatura <- sessions[i]
@@ -62,6 +69,9 @@ d.legis$nameroll <- tolower(d.legis$nameroll)
 d.rolls$uf <- tolower(d.rolls$uf)
 d.legis$uf <- tolower(d.legis$uf)
 d.rolls <- subset(merge(d.rolls,d.legis,by=c("nameroll","uf"),all.x=TRUE),select=-c(idcamara))
+
+
+
 
 if (sum(is.na(d.rolls$indb))>0) {
   d.rolls.tmp <- subset(d.rolls,is.na(indb))
