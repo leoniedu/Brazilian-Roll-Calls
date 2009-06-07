@@ -12,7 +12,7 @@ for (i in 1:length(sessions)) {
   pe <- ll[grep("Partido/UF",ll)]
   if (length(pe)==0) {
     ## here if it is a list of previous sessions
-    punloc <- grep(".*-.*/[A-Z]{2}",ll)    
+    punloc <- grep(".*-.*/[A-Z]{2}",ll,perl=TRUE)    
     pun <- ll[punloc]
     ll <- ll[-punloc]
     pun <- gsub("[\t ]+"," ",pun)
