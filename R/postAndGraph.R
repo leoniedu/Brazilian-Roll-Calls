@@ -1,7 +1,7 @@
 library(RColorBrewer)
 library(ggplot2)
 library(GDD)
-
+source("spatial.R")
 ##load(file=paste('../data/',session.now,'.RData',sep=''))
 m1 <- readShape.cent("../data/maps/BRASIL.shp","UF")
 updateall <- FALSE
