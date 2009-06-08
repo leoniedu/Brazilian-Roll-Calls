@@ -6,9 +6,16 @@ source("spatial.R")
 m1 <- readShape.cent("../data/maps/BRASIL.shp","UF")
 updateall <- FALSE
 
+library(RMySQL)
+## create  db if it does not exist
+driver<-dbDriver("MySQL")
+if (exists("connect")) dbDisconnect(connect)
+connect<-dbConnect(driver,  username="monte",password="e123456",dbname="congressoaberto",host="mysql.cluelessresearch.com")
+
+
 ##FIX this should be set earlier
-dbSendQuery(connect,"alter table votacoes drop column wpid")
-dbSendQuery(connect,"alter table votacoes add column wpid varchar(20)")
+## dbSendQuery(connect,"alter table votacoes drop column wpid")
+## dbSendQuery(connect,"alter table votacoes add column wpid varchar(20)")
 
 
 data.votos <- dbGetQuery(connect,'select * from votos where sessao="51Primeira"')
