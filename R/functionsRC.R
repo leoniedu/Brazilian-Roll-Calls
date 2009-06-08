@@ -1,4 +1,5 @@
 library(foreign)
+source("utils.R")
 
 ## global vars
 sessions <- 51:53
