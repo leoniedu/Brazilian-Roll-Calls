@@ -24,7 +24,7 @@ readx <- function(x) {
   dnow <- try(read.dbf(paste("../data/",fname,sep="")))
   if (!"try-error"%in%class(dnow)) {
     dnow$file <- fname
-    dnow$file.name <- x
+    dnow$file_name <- x
     dnow
   } else {
     NULL
@@ -32,8 +32,21 @@ readx <- function(x) {
 }
 
 
+## table(data.votos$partido)
+
+## ggplot(tmp, aes(x = voto2))+geom_bar(width = wd,aes(fill = voto))+geom_bar(data=tmp,colour=colvec,width=wd,size=6,fill="transparent")+facet_wrap(~partido)
+## ##+scale_y_continuous(name="",limits=c(0,513),expand=c(0,0))
+
+## tmp$voto <- relevel(factor(tmp$voto),"sim")
+
+## ggplot(tmp, aes(x = partido))+geom_bar(aes(fill = voto),position="fill")
+
+
+
+
+
 barplot.rc <- function(filenow,fname,title) {
-  tmp <- subset(data.votos,file.name==filenow)
+  tmp <- subset(data.votos,file_name==filenow)
   colvec <- c("transparent","blue")[order(table(tmp$votopt))]
   ## Stacked barchart
   wd <- 1
@@ -62,7 +75,7 @@ barplot.rc <- function(filenow,fname,title) {
 }
 
 map.rc <- function(filenow,fname,title) {
-  tmp <- recast(subset(data.votos,file.name==filenow),uf~variable,measure.var="concpt",fun.aggregate=function(x) c(n=length(x),p=sum(x)/length(x)))
+  tmp <- recast(subset(data.votos,file_name==filenow),uf~variable,measure.var="concpt",fun.aggregate=function(x) c(n=length(x),p=sum(x)/length(x)))
   tmp$UF <- tmp$uf
   m2 <- merge.sp(m1,tmp,by="UF")
   par(bg="grey")
@@ -82,9 +95,9 @@ map.rc <- function(filenow,fname,title) {
 }
 
 graphs <- function(filenow) {  
-  dn <- subset(data.votacoes,file.name==filenow)
+  dn <- subset(data.votacoes,file_name==filenow)
   fname <- with(dn,paste("../images/",datavot,".",substr(filenow,nchar(filenow)-11,nchar(filenow)-4),"",sep=""))  
-  title <- wordwrap(subset(data.votacoes,file.name==filenow)$texordia,40)
+  title <- wordwrap(subset(data.votacoes,file_name==filenow)$texordia,40)
   cat(".")
   barplot.rc(filenow,fname,title)
   map.rc(filenow,fname,title)
