@@ -35,6 +35,9 @@ for ( i in which(sapply(data.votacoes,is.character))) {
 }
 data.votacoes$tipo <- gsub("\\.","",data.votacoes$tipo)
 data.votacoes$wpidold <- data.votacoes$wpid
+data.votacoes$wpcontent <- gsub("Link para a proposicao na Camara: ","",data.votacoes$wpcontent)
+data.votacoes$tipo <- car::recode(data.votacoes$tipo,"'MENSAGEM'='MSG';'PROCESSO'='PRC';'PROPOSICAO'='PRP';'RECURSO'='REC';'REQUERIMENTO'='REQ'")
+
 for (i in nrow(data.votacoes):1) {
 ##for (i in 1:5) {
   filenow <- as.character(data.votacoes$file_name[i])
@@ -47,10 +50,10 @@ for (i in nrow(data.votacoes):1) {
     cat(wpimage,file="imagelink.txt")
     cat(wpcontent,file="post.txt")
     cat(res,file="postid.txt")
-    cat(paste(gsub(" +","",proposicao), format.Date(data,"%Y"),sep=","),file="tags.txt")
+    cat(paste(gsub(" +","",proposicao),tipo, format.Date(data,"%Y"),sep=","),file="tags.txt")
     ##put this earlier in the code
     cat(gsub(" |-","",as.character(wpdate)),file='date.txt')
-    cat(paste(tipo),file='category.txt')
+    cat("Votações",file='category.txt')
     res <- system("python post.py",intern=TRUE)
     print(res)
     res

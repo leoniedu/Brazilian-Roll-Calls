@@ -58,7 +58,7 @@ else :
     bc['description']=content
     bc['dateCreated']=date
     bc['categories']=cats
-    bc['keywords']=tags
+    bc['mt_keywords']=tags
     server.metaWeblog.editPost(post_id, user, passwd, bc,1)
     
 sys.stdout.write(str(post_id))
